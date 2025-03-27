@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 溫溼度顯示</title>
+</head>
+<body>
+    <h1>ESP32 溫溼度監測</h1>
+    <p><strong>溫度：</strong> <span id="temperature">等待數據...</span> °C</p>
+    <p><strong>濕度：</strong> <span id="humidity">等待數據...</span> %</p>
+
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script>
+        const client = mqtt.connect("wss://b956275ec60b4dda832e1a4eb6ad3e1b.s1.eu.hivemq.cloud:8884/mqtt", {
+            username: "qwert",
+            password: "Qwer1234"
+        });
+
+        client.on("connect", function () {
+            console.log("MQTT 連線成功！");
+            client.subscribe("home/temperature");
+            client.subscribe("home/humidity");
+        });
+
+        client.on("message", function (topic, message) {
+            if (topic === "home/temperature") {
+                document.getElementById("temperature").innerText = message.toString();
+            }
+            if (topic === "home/humidity") {
+                document.getElementById("humidity").innerText = message.toString();
+            }
+        });
+    </script>
+</body>
+</html>
